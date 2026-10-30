@@ -47,13 +47,17 @@
 <details>
 <summary>更多实物照片：显示效果与设备连接</summary>
 
-| 显示屏上的点云效果 | 设备、主控与显示屏连接 |
-| --- | --- |
-| ![显示屏展示已保存点云场景](docs/media/hardware-03.jpg) | ![设备与主控的连接和安装侧视图](docs/media/hardware-04.jpg) |
+<table>
+  <tr><th width="50%">显示屏上的点云效果</th><th width="50%">设备、主控与显示屏连接</th></tr>
+  <tr>
+    <td width="50%" align="center" valign="top"><img src="docs/media/hardware-03.jpg" alt="显示屏展示已保存点云场景" width="420" height="420"></td>
+    <td width="50%" align="center" valign="top"><a href="docs/media/hardware-04.jpg"><img src="docs/media/hardware-04-square.jpg" alt="设备与主控的连接和安装侧视图，点击查看完整原图" width="420" height="420"></a></td>
+  </tr>
+</table>
 
 </details>
 
-素材目录为 `docs/media/`，引用使用仓库相对路径。上传仓库时请一并保留此目录；演示视频未作剪辑，截图与照片未作内容修改。
+素材目录为 `docs/media/`，引用使用仓库相对路径。上传仓库时请一并保留此目录；演示视频未作剪辑，照片展示副本仅作等比例裁剪；点击连接侧视图可查看完整原图。
 
 ## 目录
 
