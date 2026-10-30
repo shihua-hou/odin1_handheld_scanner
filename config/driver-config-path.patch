@@ -1,0 +1,17 @@
+diff --git a/src/host_sdk_sample.cpp b/src/host_sdk_sample.cpp
+index 7582bea..75058aa 100644
+--- a/src/host_sdk_sample.cpp
++++ b/src/host_sdk_sample.cpp
+@@ -2495,6 +2495,12 @@ int main(int argc, char *argv[])
+     #endif
+         std::string config_dir = package_path + "/config";
+         std::string config_file = config_dir + "/control_command.yaml";
++        #ifdef ROS2
++            // Honour the path supplied by launch/--ros-args instead of silently
++            // loading the source-tree default for every deployment.
++            config_file = node->declare_parameter<std::string>("config_file", config_file);
++            RCLCPP_INFO(node->get_logger(), "Loading driver config: %s", config_file.c_str());
++        #endif
+ 
+         // Initialize command file path to /tmp/odin_command.txt
+         g_command_file_path = "/tmp/odin_command.txt";

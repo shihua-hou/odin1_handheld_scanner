@@ -1,0 +1,6 @@
+(function(){
+const banner=document.createElement('div');banner.id='healthBanner';banner.style.cssText='display:none;position:fixed;left:50%;top:14px;transform:translateX(-50%);z-index:100;color:#fff;background:#4b211d;border:1px solid #9a5146;border-radius:8px;padding:10px 16px;font:12px monospace;box-shadow:0 8px 30px #0008;max-width:min(720px,calc(100vw - 30px));text-align:center';document.body.append(banner);
+function setText(id,text){const e=document.getElementById(id);if(e)e.textContent=text;}
+async function check(){try{const r=await fetch('/api/status');const d=await r.json();const device=d.usb_connected?(d.driver_running?(d.connected?'SLAM 数据在线':'驱动运行中，等待数据'):'USB 已连接 · 驱动待机'):'未检测到 Odin1';setText('deviceText',device);setText('focusDevice',device);const dot=document.getElementById('deviceDot');if(dot)dot.classList.toggle('online',!!d.usb_connected);if(d.usb_connected&&!d.driver_running&&!d.error&&!d.ros_error){banner.style.display='none';}else{const issue=d.error||d.ros_error||(!d.usb_connected?'请检查 Odin1 供电和 USB 3.0 连接':'');if(issue){banner.textContent='状态提示：'+issue;banner.style.display='block';}else banner.style.display='none';}}catch(e){banner.textContent='WebApp 连接中断，正在重试';banner.style.display='block';}}
+check();setInterval(check,2000);
+})();

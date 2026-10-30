@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Odin1 · 完整功能界面</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script type="importmap">{"imports":{"three":"/static/vendor/three.module.js"}}</script>
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <header class="brand"><div class="brand-mark">O<span>1</span></div><div>ODIN <b>WORKSPACE</b><small>HANDHELD MAPPING STUDIO</small></div></header>
+      <div class="project-label">PROJECT / 001</div><h1 class="project-title">空间扫描工作台</h1>
+      <div class="device"><span id="deviceDot" class="dot"></span><div><b>ODIN1</b><small id="deviceText">等待传感器数据</small></div><span class="chip">USB 3.0</span></div>
+      <section>
+        <div class="section-title">01 <span>采集控制</span><span id="modeBadge" class="badge">STANDBY</span></div>
+        <button id="start" class="primary full">◉ 开始 / 继续扫描</button>
+        <div class="button-row"><button id="pause">Ⅱ 暂停</button><button id="new">＋ 新场景</button></div>
+        <div class="voxel-control">
+          <label class="field-label" for="mappingVoxel">建图体素 <span id="mappingVoxelLabel">5 mm</span></label>
+          <input id="mappingVoxelRange" type="range" min="1" max="1000" step="1" value="5" aria-label="建图体素滑块">
+          <div class="inline-field"><input id="mappingVoxel" type="number" min="1" max="1000" step="1" value="5"><span>mm</span><button id="applyVoxel">应用</button></div>
+          <small>1 mm（最细）— 1 m（最粗）。暂停后应用；调细后继续扫描以补充细节。</small>
+          <div class="preset-label">OdinViewer 参数预设</div>
+          <div class="preset-grid" role="group" aria-label="点云参数预设">
+            <button type="button" data-preset="detail">细节</button>
+            <button type="button" data-preset="indoor" class="active">室内</button>
+            <button type="button" data-preset="large">大场景</button>
+          </div>
+          <small id="presetHint">室内浏览：5 mm 体素，点大小 2 px。</small>
+        </div>
+        <div class="record-row"><label><input id="olxRecord" type="checkbox">录制 MindCloud OLX</label><span id="olxRecordState">OFF</span></div>
+        <small>需在启动驱动前开启；约 9.5 GB / 10 分钟，数据保存在驱动 recorddata 目录。</small>
+        <div class="record-row"><label><input id="record" type="checkbox">录制 ROS 原始数据</label><span id="recordState">OFF</span></div>
+        <button id="stopDriver" class="text-button">停止驱动</button>
+      </section>
+      <section>
+        <div class="section-title">02 <span>地图文件</span></div>
+        <label class="field-label" for="sceneName">场景名称</label><input id="sceneName" value="我的空间扫描" maxlength="80">
+        <button id="save" class="full secondary">↓ 保存点云场景</button>
+
+        <div id="archives" class="archives"><p class="muted">还没有保存的场景</p></div>
+      </section>
+
+      <footer><span class="dot green"></span> SELF-HOSTED / ROS 2 HUMBLE</footer>
+    </aside>
+    <main>
+      <nav class="topbar"><div><span class="muted">工作区</span><span class="divider">/</span><strong>三维场景</strong><span class="live-label" id="liveLabel">○ 待机</span></div><div class="top-actions"><a href="/workbench" class="secondary" style="padding:10px">工作台界面</a><span id="transport">连接中</span><button id="fit">适应视图 <kbd>F</kbd></button></div></nav>
+      <div class="metrics"><div><span>地图点数</span><strong id="pointCount">0</strong><small>POINTS</small></div><div><span>接收帧数</span><strong id="frameCount">0</strong><small>FRAMES</small></div><div><span>体素精度</span><strong id="resolutionText">5 <i>mm</i></strong><small>RESOLUTION</small></div><div><span>坐标系</span><strong class="metric-frame">ODOM</strong><small>METRES / Z UP</small></div><div class="metric-status"><span>采集状态</span><strong id="captureState">未开始</strong><small id="cloudAge">等待第一帧数据</small></div></div>
+      <div class="workspace">
+        <div class="viewport" id="viewport">
+          <div class="view-label"><span class="dot green"></span> SLAM / ACCUMULATED <span class="muted">/</span> <span id="viewCount">0 points shown</span></div>
+          <div class="view-tools"><button id="surfaceMode" hidden>连续表面</button><button id="pointsMode" class="active">空间点云</button><button id="perspective" class="active">3D</button><button id="top">俯视</button><button id="grid" class="active">网格</button><button id="colorMode">RGB</button></div>
+          <div id="empty" class="empty" hidden></div>
+          <div class="view-bottom"><span>左键旋转 · 右键平移 · 滚轮缩放</span><span id="surfaceStats" hidden></span><span id="selection">未选择点</span></div>
+        </div>
+        <aside class="inspector">
+          <div class="inspector-heading">场景工具 <span>⌘</span></div>
+          <div class="tabs"><button id="tabEdit" class="active">编辑</button><button id="tabInfo">信息</button></div>
+          <div id="editPanel">
+            <p class="hint">先暂停采集再编辑。所有操作保留 3 步撤销；保存将创建新副本。</p>
+            <label class="field-label">交互工具</label>
+            <div class="tool-grid"><button data-tool="orbit" class="active">↻<span>浏览</span></button><button data-tool="measure">⌁<span>测距</span></button><button data-tool="erase">⊖<span>删除点</span></button></div>
+            <div class="field"><label for="radius">删除半径 <span>m</span></label><input id="radius" type="number" min="0.01" max="100" step="0.05" value="0.15"></div>
+            <div id="measurement" class="measurement">测距：依次点击两个点</div>
+            <div class="rule"></div><label class="field-label">空间范围 <span class="muted">/ 米</span></label>
+            <div class="bounds-label"><span>轴</span><span>最小值</span><span>最大值</span></div>
+            <div class="bounds"><b class="red">X</b><input id="minX" type="number" value="-10" step="0.1" aria-label="X最小值"><input id="maxX" type="number" value="10" step="0.1" aria-label="X最大值"><b class="green-text">Y</b><input id="minY" type="number" value="-10" step="0.1" aria-label="Y最小值"><input id="maxY" type="number" value="10" step="0.1" aria-label="Y最大值"><b class="blue">Z</b><input id="minZ" type="number" value="-2" step="0.1" aria-label="Z最小值"><input id="maxZ" type="number" value="5" step="0.1" aria-label="Z最大值"></div>
+            <label class="check"><input id="showBox" type="checkbox">显示范围框</label>
+            <div class="button-row"><button id="crop">保留框内</button><button id="deleteBox">删除框内</button></div>
+            <div class="rule"></div><label class="field-label" for="voxel">点云降采样</label>
+            <div class="inline-field"><input id="voxel" type="number" min="0.001" max="2" value="0.008" step="0.001"><span>m</span><button id="downsample">应用</button></div>
+            <button id="undo" class="full undo">↶ 撤销上一步</button>
+          </div>
+          <div id="infoPanel" hidden><dl><dt>会话</dt><dd id="sessionId">—</dd><dt>最新位姿 / m</dt><dd id="pose">—</dd><dt>设备地图</dt><dd>SLAM 模式 / 支持回环</dd><dt>显示限制</dt><dd>预览最多 150,000 点；导出保留完整地图</dd><dt>地图点数上限</dt><dd>2,000,000 点</dd><dt>编辑格式</dt><dd>PLY / PCD / NPZ</dd></dl></div>
+          <div class="inspector-bottom"><label for="pointSize">点大小</label><input id="pointSize" type="range" min="1" max="6" value="2" step="0.5"><small>空间点云按增量传输。暂停采集后可进行点云编辑。</small></div>
+        </aside>
+      </div>
+      <div class="statusbar"><span id="statusMessage">就绪 · 连接工作区以开始</span><span>ODIN STUDIO <b>v1.0</b></span></div>
+    </main>
+  </div>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="/static/app.js?v=silver-grid-6"></script>
+<script src="/static/health-ui.js"></script></body>
+</html>
