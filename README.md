@@ -33,9 +33,16 @@
 
 ### 实物与部署
 
-| 主控与显示屏部署 | Odin1 设备正面 |
-| --- | --- |
-| ![主控与显示屏运行工作台的部署照片](docs/media/hardware-01.jpg) | ![Odin1 设备正面与安装支架](docs/media/hardware-02.jpg) |
+<table>
+  <tr>
+    <th width="50%">主控与显示屏部署</th>
+    <th width="50%">Odin1 设备正面</th>
+  </tr>
+  <tr>
+    <td width="50%" align="center" valign="top"><img src="docs/media/hardware-01.jpg" alt="主控与显示屏运行工作台的部署照片" width="420" height="420"></td>
+    <td width="50%" align="center" valign="top"><img src="docs/media/hardware-02.jpg" alt="Odin1 设备正面与安装支架" width="420" height="420"></td>
+  </tr>
+</table>
 
 <details>
 <summary>更多实物照片：显示效果与设备连接</summary>
